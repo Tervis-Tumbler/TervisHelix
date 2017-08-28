@@ -131,3 +131,24 @@ function Get-HelixAutoLogonCredential {
         Get-PasswordstateCredential -PasswordID $PasswordID
     }
 }
+
+function Get-HelixAutologonStatus {
+    param (
+        [Parameter(Mandatory,ValueFromPipelineByPropertyName)]$ComputerName
+    )
+    process {
+        $AutoAdminLogon = Invoke-Command -ComputerName $ComputerName -ScriptBlock {
+            Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" -Name AutoAdminLogon -Verbose | 
+                select -ExpandProperty AutoAdminLogon
+        }
+        [PSCustomObject][Ordered]@{
+            ComputerName = $ComputerName
+            AutologonEnabled = ConvertTo-Boolean -value $AutoAdminLogon
+        }
+    }
+}
+
+function Get-HelixComputers {
+    Get-ADComputer -Filter {Name -like "Helix*"} |
+        Add-Member -MemberType AliasProperty -Name ComputerName -Value Name -Force -PassThru
+}
