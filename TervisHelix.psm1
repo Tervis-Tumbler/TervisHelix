@@ -128,7 +128,7 @@ function Get-HelixAutoLogonCredential {
             throw "Get-HelixAutoLogonCredential does not yet support getting credentials for stations numbers greater than 12"
         }
         $PasswordID = $PIDZero + $IDInt
-        Get-PasswordstateCredential -PasswordID $PasswordID
+        Get-PasswordstatePassword -AsCredential -ID $PasswordID
     }
 }
 
